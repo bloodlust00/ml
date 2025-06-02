@@ -1,25 +1,38 @@
 import pandas as pd
 
-def find_s_algorithm(file_path):
-    data = pd.read_csv(file_path)
-    print("Training data:")
-    print(data)
-    
-    attributes = data.columns[:-1]
-    class_label = data.columns[-1]
-    
-    hypothesis = ['?' for _ in attributes]
-    
-    for index, row in data.iterrows():
-        if row[class_label] == 'Yes':
-            for i, value in enumerate(row[attributes]):
-                if hypothesis[i] == '?' or hypothesis[i] == value:
-                    hypothesis[i] = value
-                else:
-                    hypothesis[i] = '?'
-                    
-    return hypothesis
+# Load CSV
+df = pd.read_csv("training_dataset.csv")
+print(df)
 
-file_path = 'training_dataset.csv'
-hypothesis = find_s_algorithm(file_path)
-print("\nThe final hypothesis is:", hypothesis)
+# Get number of columns
+columnLength = df.shape[1]
+
+# Initialize
+h = ['0'] * (columnLength - 1)
+hp = []   # Positive examples
+hn = []   # Negative examples
+
+# Separate positive and negative examples
+for trainingExample in df.values:
+    if str(trainingExample[-1]).strip().lower() == 'yes':
+        hp.append(list(trainingExample))
+    else:
+        hn.append(list(trainingExample))
+
+# Build maximally specific hypothesis
+for i in range(len(hp)):
+    for j in range(columnLength - 1):
+        if h[j] == '0':
+            h[j] = hp[i][j]
+        elif h[j] != hp[i][j]:
+            h[j] = '?'
+
+# Display results
+print('\nThe positive Hypotheses are\n')
+print(hp)
+
+print('\nThe negative Hypotheses are')
+print(hn)
+
+print('\nThe Maximally Specific Hypothesis h is')
+print(h)
